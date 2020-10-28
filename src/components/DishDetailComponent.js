@@ -68,7 +68,7 @@ import { Card, CardImg, CardBody, CardTitle, CardText } from 'reactstrap';
         }
         else {
             return (
-                <div>Fuck</div>
+                <div></div>
             );
         }
     }
