@@ -22,9 +22,8 @@ class CommentForm extends Component {
     }
 
     handleSubmit(values) {
-        console.log("Current State is: " + JSON.stringify(values));
-        alert("Current State is: " + JSON.stringify(values));
-        this.toggleModal()
+        this.toggleModal();
+        this.props.addComment(this.props.dishId, values.rating, values.author, values.comment);
     }
 
     toggleModal() {
@@ -89,37 +88,38 @@ class CommentForm extends Component {
 
 function RenderDish({ dish }) {
     return (
-        <Card>
-            <CardImg width="100%" object src={dish.image} alt={dish.name} />
-            <CardBody>
-                <CardTitle>{dish.name}</CardTitle>
-                <CardText>{dish.description}</CardText>
-            </CardBody>
-        </Card>
+        <div className="col-12 col-sm-12 col-md-5 m-1">
+            <Card>
+                <CardImg width="100%" object src={dish.image} alt={dish.name} />
+                <CardBody>
+                    <CardTitle>{dish.name}</CardTitle>
+                    <CardText>{dish.description}</CardText>
+                </CardBody>
+            </Card>
+        </div>
     );
 
 }
 
-function RenderComments({ comments }) {
+function RenderComments({ comments, addComment, dishId }) {
     if (comments != null) {
-        const styledComments = comments.map((comment) => {
-            return (
-                <div key={comment.id} className="container">
-                    <div className="row">
-                        <li>
-                            <p>{comment.comment}</p>
-                            <p>--{comment.author}, {new Intl.DateTimeFormat("en-US",
-                                { year: 'numeric', day: '2-digit', month: 'short' }).format(new Date(Date.parse(comment.date)))}</p>
-                        </li>
-                    </div>
-                </div>
 
-            );
-        });
         return (
-            <ul className="list-unstyled">
-                {styledComments}
-            </ul>
+            <div className="col-12 col-sm-12 col-md-5 m-1">
+                <h4>Comments</h4>
+                <ul className="list-unstyled">
+                    {comments.map((comment) => {
+                        return (
+                            <li key={comment.id}>
+                                <p>{comment.comment}</p>
+                                <p>--{comment.author}, {new Intl.DateTimeFormat("en-US",
+                                    { year: 'numeric', day: '2-digit', month: 'short' }).format(new Date(Date.parse(comment.date)))}</p>
+                            </li>
+                        );
+                    })}
+                </ul>
+                <CommentForm dishId={dishId} addComment={addComment} />
+            </div>
 
         );
     }
@@ -147,15 +147,10 @@ const DishDetail = (props) => {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-12 col-sm-12 col-md-5 m-1">
-                        <RenderDish dish={props.dish} />
-                    </div>
-                    <div className="col-12 col-sm-12 col-md-5 m-1">
-                        <h4>Comments</h4>
-                        <RenderComments comments={props.comments} />
-                        <CommentForm />
-                    </div>
-
+                    <RenderDish dish={props.dish} />
+                    <RenderComments comments={props.comments}
+                        addComment={props.addComment}
+                        dishId={props.dish.id} />
                 </div>
             </div>
 
